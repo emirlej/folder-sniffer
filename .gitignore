@@ -1,0 +1,14 @@
+# Not wanted files
+intility*
+
+# Do not want log files
+*log*
+output/
+input/
+/from_kristian/
+
+# batch files
+*.bat
+
+# folder containing stuff I don't want to git
+do_not_git/
