@@ -9,7 +9,7 @@ function SetupRegisterObjectEvent {
     # args[0] = FileSystemWatcher and is required
 
     # Unique ID of the listener. Avoids creating more than one
-    $sourceId = "{0}_Listener_{1}" -f $EventName, $LogFilePath
+    $sourceId = "{0}_Listener" -f $EventName
     
     Register-ObjectEvent -InputObject $args[0] -EventName $EventName -SourceIdentifier $sourceId -Action {
 
