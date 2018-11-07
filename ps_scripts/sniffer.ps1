@@ -24,8 +24,15 @@ function SetupRegisterObjectEvent {
 }
 
 # Create the listeners
-foreach ($changeType in "Created", "Changed", "Renamed", "Deleted") {
-    SetupRegisterObjectEvent $watcher -EventName $changeType
+$changeTypes = "Created", "Changed", "Renamed", "Deleted"
+
+foreach ($ct in $changeTypes) {
+    if ($ct -eq "Created" -or $ct -eq "Changed") {
+        SetupRegisterObjectEvent $watcher -EventName $ct
+        # EXEC SP below        
+    } else {
+        SetupRegisterObjectEvent $watcher -EventName $ct
+    }
 }
 
 #Exit
