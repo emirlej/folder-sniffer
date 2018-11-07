@@ -1,32 +1,30 @@
 $watcher = New-Object System.IO.FileSystemWatcher
-$watcher.Path  = "C:\Users\emirl\Desktop\ps_file_sniffer_test\input"
-$Global:logFile = ".\log.txt"
+$watcher.Path  = "C:\Users\emirl\Desktop\ps_file_sniffer_test\input" # CHANGE
+$Global:logFile = ".\log.txt" # CHANGE
 
-# Actions
-# $action_log_event = { $path = $Event.SourceEventArgs.FullPath
-#                     $changeType = $Event.SourceEventArgs.ChangeType
-#                     $logline = $(Get-Date), $changeType, $path
-#                     Add-Content $logFile -value $logline
 
 function SetupRegisterObjectEvent {
+    # Parameters
     Param($EventName) 
+    # args[0] = FileSystemWatcher and is required
+
+    # Unique ID of the listener. Avoids creating more than one
     $sourceId = "{0}_Listener_{1}" -f $EventName, $LogFilePath
     
     Register-ObjectEvent -InputObject $args[0] -EventName $EventName -SourceIdentifier $sourceId -Action {
 
-        $logLine  = "{1}: {2} - {0}" -f 
-            $Event.SourceEventArgs.FullPath,
-            $Event.SourceEventArgs.ChangeType,
-            $Event.TimeGenerated
+        # This will be added to the log
+        $logLine = $Event.TimeGenerated, 
+                   $Event.SourceEventArgs.FullPath, 
+                   $Event.SourceEventArgs.ChangeType            
 
         # Write string to log
-        $logLine | Out-File -FilePath $Global:logFile -Append
+        Add-Content $Global:logFile -Value $logLine
     }
 }
 
 # Create the listeners
 foreach ($changeType in "Created", "Changed", "Renamed", "Deleted") {
-    #Write-Output "Creating eventlistener for {0}" -f $changeType
     SetupRegisterObjectEvent $watcher -EventName $changeType
 }
 
