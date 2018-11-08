@@ -4,9 +4,60 @@ $Global:logFile = ".\log.txt" # CHANGE
 
 # How to use a function inside the -Action in Register-ObjectEvent
 # Found solution here: https://stackoverflow.com/questions/42174731/powershell-console-issue-with-function-executing-in-action-of-register-objecteve
-function global:hello_world {
-    param($inputParam)
-    Write-Host "Hello World $inputParam"
+#TODO: The function below is not mine. Should be cleaned up and refactored
+function global:RunExecNonQuery {
+    param (
+        $conStr, $cmdText
+    )
+
+    Write-Host "Creating SQL Connection..."
+            # Instantiate new SqlConnection object.
+            $Connection = New-Object System.Data.SQLClient.SQLConnection
+
+            # Set the SqlConnection object's connection string to the passed value.
+            $Connection.ConnectionString = $conStr
+
+            # Perform database operations in try-catch-finally block since database operations often fail.
+            try
+            {
+                Write-Host "Opening SQL Connection..."
+                # Open the connection to the database.
+                $Connection.Open()
+
+                Write-Host "Creating SQL Command..."
+                # Instantiate a SqlCommand object.
+                $Command = New-Object System.Data.SQLClient.SQLCommand
+                # Set the SqlCommand's connection to the SqlConnection object above.
+                $Command.Connection = $Connection
+                # Set the SqlCommand's command text to the query value passed in.
+                $Command.CommandText = $cmdText
+                $Command.CommandTimeout = 0
+
+                Write-Host "Executing SQL Command..."
+                # Execute the command against the database without returning results (NonQuery).
+                $Command.ExecuteNonQuery()
+            }
+            catch [System.Data.SqlClient.SqlException]
+            {
+                # A SqlException occurred. According to documentation, this happens when a command is executed against a locked row.
+                Write-Host "One or more of the rows being affected were locked. Please check your query and data then try again."
+            }
+            # General expection
+            catch
+            {
+                # Print out the general error
+                Write-Host $_.Exception.Message
+                Write-Host $_.Exception.ItemName
+            }
+            finally {
+                # Determine if the connection was opened.
+                if ($Connection.State -eq "Open")
+                {
+                    Write-Host "Closing Connection..."
+                    # Close the currently open connection.
+                    $Connection.Close()
+                }
+        }
 }
 
 function SetupRegisterObjectEvent {
@@ -26,7 +77,7 @@ function SetupRegisterObjectEvent {
                    $Event.SourceEventArgs.ChangeType            
 
         # Testing usage of function inside the -Action scope
-        global:hello_world -inputParam $Event.SourceEventArgs.ChangeType
+        global:RunExecNonQuery -conStr "NOT SETUP" -cmdText "NOT SETUP"
 
         # Write string to log
         Add-Content $Global:logFile -Value $logLine
