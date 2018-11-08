@@ -45,9 +45,11 @@ Name        : emirs.txt
 - [Powershell FileSystemWatcher][1]
 - [Monitoring file system changes with PowerShell][2]
 - [Manage Event Subscriptions with PowerShell][3] 
+- [Using function inside Register-Object Action][4]
 
 
 <!-- Refs -->
 [1]: https://gallery.technet.microsoft.com/scriptcenter/Powershell-FileSystemWatche-dfd7084b
 [2]: https://dereknewton.com/2011/05/monitoring-file-system-changes-with-powershell/
 [3]: https://blogs.technet.microsoft.com/heyscriptingguy/2011/06/17/manage-event-subscriptions-with-powershell/
+[4]: https://stackoverflow.com/questions/42174731/powershell-console-issue-with-function-executing-in-action-of-register-objecteve
